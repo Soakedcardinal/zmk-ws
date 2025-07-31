@@ -9,8 +9,29 @@
         "${workspaceFolder}/zmk_formatter.py",
         "${workspaceFolder}/zmk-config/config/tightyl.keymap"
       ],
-      "problemMatcher": [],
-      "group": "build"
+      "problemMatcher": []
+    },
+    {
+      "label": "Build via Github Actions",
+      "type": "shell",
+      "command": "python",
+      "args": [
+        "${workspaceFolder}/build.py"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Download Artifact",
+      "type": "shell",
+      "command": "python",
+      "args": [
+        "${workspaceFolder}/download_artifact.py"
+      ],
+      "problemMatcher": []
     }
   ]
 }
