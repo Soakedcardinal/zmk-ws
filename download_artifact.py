@@ -2,8 +2,8 @@ import requests
 import zipfile
 import os
 import shutil
-from pathlib import Path
 import subprocess
+from pathlib import Path
 
 def load_env_file():
     """Load variables from .env file"""
@@ -23,17 +23,6 @@ def load_env_file():
         print("GITHUB_REPO=your_repo_name")
         return None
     return env_vars
-
-def open_explorer(path: Path):
-    if os.name == 'nt':  # Windows
-        subprocess.run(['explorer', str(path)])
-    elif os.name == 'posix':
-        # macOS
-        if shutil.which('open'):
-            subprocess.run(['open', str(path)])
-        # Linux (try xdg-open)
-        elif shutil.which('xdg-open'):
-            subprocess.run(['xdg-open', str(path)])
 
 def download_latest_artifact():
     # Load configuration from .env file
@@ -70,7 +59,31 @@ def download_latest_artifact():
             
         latest_run = runs[0]
         run_id = latest_run["id"]
-        print(f"Found run: {run_id}")
+        commit_sha = latest_run["head_sha"]
+        print(f"Found run: {run_id} at commit {commit_sha}")
+        
+        # Get the latest tag for the commit
+        tags_url = f"https://api.github.com/repos/{OWNER}/{REPO}/commits/{commit_sha}/tags"
+        # Note: GitHub API does not have a direct endpoint to get tags for a commit,
+        # so we'll get all tags and find the latest one pointing to the commit.
+        # Instead, list tags and check which one points to this commit.
+        
+        tags_list_url = f"https://api.github.com/repos/{OWNER}/{REPO}/tags"
+        tags_response = requests.get(tags_list_url, headers=headers)
+        tags_response.raise_for_status()
+        tags = tags_response.json()
+        
+        latest_tag = None
+        for tag in tags:
+            if tag["commit"]["sha"] == commit_sha:
+                latest_tag = tag["name"]
+                break
+        
+        if not latest_tag:
+            # If no tag found pointing exactly to the commit, fallback to latest tag overall
+            latest_tag = tags[0]["name"] if tags else "untagged"
+        
+        print(f"Using tag: {latest_tag}")
         
         # Get artifacts for this run
         artifacts_url = f"https://api.github.com/repos/{OWNER}/{REPO}/actions/runs/{run_id}/artifacts"
@@ -98,13 +111,13 @@ def download_latest_artifact():
         with open(zip_path, "wb") as f:
             f.write(download_response.content)
         
-        # Create timestamped directory under releases with tag before timestamp
+        # Create timestamped directory under releases with tag prefix
         from datetime import datetime
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         releases_dir = Path("releases")
         releases_dir.mkdir(exist_ok=True)
         
-        release_dir = releases_dir / f"{artifact_name}-{timestamp}"
+        release_dir = releases_dir / f"{latest_tag}-{timestamp}"
         release_dir.mkdir()
         
         # Extract the zip
@@ -117,9 +130,12 @@ def download_latest_artifact():
         
         print(f"Success! Artifact extracted to ./{release_dir}/")
         print(f"Contents: {list(release_dir.iterdir())}")
-
-        # Open explorer window to the new directory
-        open_explorer(release_dir)
+        
+        # Open new Explorer window (Windows only)
+        if os.name == 'nt':
+            subprocess.Popen(['explorer', str(release_dir.resolve())])
+        else:
+            print("Opening file explorer is only supported on Windows in this script.")
         
     except requests.exceptions.RequestException as e:
         print(f"API Error: {e}")
