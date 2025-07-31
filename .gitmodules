@@ -1,0 +1,6 @@
+[submodule "zmk-config"]
+	path = zmk-config
+	url = ./zmk-config
+[submodule "zmk-keyboard-tightyl"]
+	path = zmk-keyboard-tightyl
+	url = .\\zmk-keyboard-tightyl\\
