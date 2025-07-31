@@ -1,0 +1,16 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Format Keymap",
+      "type": "shell",
+      "command": "python",
+      "args": [
+        "${workspaceFolder}/zmk_formatter.py",
+        "${workspaceFolder}/zmk-config/config/tightyl.keymap"
+      ],
+      "problemMatcher": [],
+      "group": "build"
+    }
+  ]
+}
