@@ -1,0 +1,25 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {}
+	// "tasks": {
+	// 	"version": "2.0.0",
+	// 	"tasks": [{
+	// 				"label": "Format ZMK Keymap",
+	// 				"type": "shell",
+	// 				"command": "python",
+	// 				"args": ["${workspaceFolder}/zmk_formatter.py", "${workspaceFolder}/zmk-config/config/tightyl.keymap"],
+	// 				"group": "build",
+	// 				"presentation": {
+	// 					"echo": true,
+	// 					"reveal": "silent",
+	// 					"focus": false,
+	// 					"panel": "shared"
+	// 					}
+    //     			}
+	// 	]
+	// }
+}
