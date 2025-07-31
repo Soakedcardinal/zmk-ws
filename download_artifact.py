@@ -3,6 +3,7 @@ import zipfile
 import os
 import shutil
 from pathlib import Path
+import subprocess
 
 def load_env_file():
     """Load variables from .env file"""
@@ -22,6 +23,17 @@ def load_env_file():
         print("GITHUB_REPO=your_repo_name")
         return None
     return env_vars
+
+def open_explorer(path: Path):
+    if os.name == 'nt':  # Windows
+        subprocess.run(['explorer', str(path)])
+    elif os.name == 'posix':
+        # macOS
+        if shutil.which('open'):
+            subprocess.run(['open', str(path)])
+        # Linux (try xdg-open)
+        elif shutil.which('xdg-open'):
+            subprocess.run(['xdg-open', str(path)])
 
 def download_latest_artifact():
     # Load configuration from .env file
@@ -86,13 +98,13 @@ def download_latest_artifact():
         with open(zip_path, "wb") as f:
             f.write(download_response.content)
         
-        # Create timestamped directory under releases
+        # Create timestamped directory under releases with tag before timestamp
         from datetime import datetime
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         releases_dir = Path("releases")
         releases_dir.mkdir(exist_ok=True)
         
-        release_dir = releases_dir / f"{timestamp}_{artifact_name}"
+        release_dir = releases_dir / f"{artifact_name}-{timestamp}"
         release_dir.mkdir()
         
         # Extract the zip
@@ -105,6 +117,9 @@ def download_latest_artifact():
         
         print(f"Success! Artifact extracted to ./{release_dir}/")
         print(f"Contents: {list(release_dir.iterdir())}")
+
+        # Open explorer window to the new directory
+        open_explorer(release_dir)
         
     except requests.exceptions.RequestException as e:
         print(f"API Error: {e}")
