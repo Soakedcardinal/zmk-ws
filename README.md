@@ -21,13 +21,3 @@ python .\download_artifact.py
 ```
 
 or in vscode/vscodium, CTL+SHIFT+B to build using github actions, then CTL+SHIFT+P->Run Task: Download Artifact
-
-
-## Helpful Tools
-
-https://zmk-physical-layout-converter.streamlit.app/
-https://zmk-layout-helper.netlify.app/
-https://keymap-drawer.streamlit.app/
-
-
-
