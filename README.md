@@ -1,12 +1,18 @@
 # zmk-ws
 
+ZMK Keyboard Firmware Setup for Tightyl Keyboard
 
-create an .env file with:
+## Usage
+
+First create an .env file with:
+
 ```.env
 GITHUB_TOKEN=your_token
 GITHUB_OWNER=your_username_or_org
 GITHUB_REPO=your_repo_name
 ```
+
+Then use python scripts:
 
 ```powershell
 python .\build.py
@@ -14,4 +20,14 @@ python .\build.py
 python .\download_artifact.py
 ```
 
-or use vscode/vscodium, CTL+SHIFT+B to build, then CTL+SHIFT+P->Run Task: Download Artifact
+or in vscode/vscodium, CTL+SHIFT+B to build using github actions, then CTL+SHIFT+P->Run Task: Download Artifact
+
+
+## Helpful Tools
+
+https://zmk-physical-layout-converter.streamlit.app/
+https://zmk-layout-helper.netlify.app/
+https://keymap-drawer.streamlit.app/
+
+
+
